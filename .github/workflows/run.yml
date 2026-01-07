@@ -19,8 +19,14 @@ jobs:
       - name: Install tools
         run: |
           sudo apt-get update
-          sudo apt-get install liblzo2-dev squashfs-tools device-tree-compiler -y
-          sudo pip install python-lzo ubi_reader
+          sudo apt-get install liblzo2-dev squashfs-tools device-tree-compiler python3-pip -y
+          
+          # Install python packages without cryptography dependency conflicts
+          sudo pip3 install --ignore-installed python-lzo
+          
+          # Install ubi_reader with specific approach to avoid cryptography conflicts
+          sudo apt-get remove python3-cryptography -y || true
+          sudo pip3 install --ignore-installed --no-cache-dir ubi_reader
 
           wget https://github.com/onekey-sec/sasquatch/releases/download/sasquatch-v4.5.1-5/sasquatch_1.0_amd64.deb
           sudo dpkg -i sasquatch_1.0_amd64.deb
